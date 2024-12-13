@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import HeroImage from "../assets/Heart.png"
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
 
 const phrases = [
   "Your AI Partner for Heart Care.",
@@ -20,9 +21,9 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="bg-[#f8f8f8] flex flex-col h-screen font-[Poppins]">
+    <div className="bg-[#f8f8f8] flex flex-col  font-[Poppins]">
       {/* Hero Section */}
-      <section className="flex flex-col md:flex-row items-center justify-center flex-grow p-6">
+      <section className="flex flex-col md:flex-row items-center justify-center flex-grow h-[80vh] p-6">
         {/* Left Side - Animated Text */}
         <div className="w-full md:w-1/2 text-center md:text-left p-6">
           <h1 className="text-4xl md:text-5xl font-bold text-[#4a5568] mb-6 leading-tight">
@@ -89,6 +90,106 @@ const Home = () => {
           </div>
         </div>
       </section>
+          <footer className="bg-gray-900 text-gray-200 py-12 font-[Poppins]">
+      <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* About Section */}
+        <div className="text-center md:text-left">
+          <h3 className="text-2xl font-semibold text-white mb-4">HeartCare AI</h3>
+          <p className="text-gray-400 leading-relaxed mb-4">
+            At HeartCare AI, we utilize the latest in artificial intelligence
+            to provide real-time heart health analysis. Helping you take charge
+            of your health, one scan at a time.
+          </p>
+          <div className="flex justify-center md:justify-start space-x-4">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              <FaFacebookF size={20} />
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              <FaTwitter size={20} />
+            </a>
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              <FaLinkedinIn size={20} />
+            </a>
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition duration-300"
+            >
+              <FaInstagram size={20} />
+            </a>
+          </div>
+        </div>
+
+        {/* Quick Links */}
+        <div className="text-center">
+          <h3 className="text-2xl font-semibold text-white mb-4">Quick Links</h3>
+          <ul className="space-y-2">
+            <li>
+              <a
+                href="/"
+                className="text-gray-400 hover:text-white transition duration-300"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="/upload"
+                className="text-gray-400 hover:text-white transition duration-300"
+              >
+                Upload Scans
+              </a>
+            </li>
+            <li>
+              <a
+                href="/results"
+                className="text-gray-400 hover:text-white transition duration-300"
+              >
+                Results
+              </a>
+            </li>
+            <li>
+              <a
+                href="/about"
+                className="text-gray-400 hover:text-white transition duration-300"
+              >
+                About Us
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Contact Information */}
+        <div className="text-center md:text-right">
+          <h3 className="text-2xl font-semibold text-white mb-4">Contact</h3>
+          <p className="text-gray-400">Email: support@heartcareai.com</p>
+          <p className="text-gray-400">Phone: +1 (800) 123-4567</p>
+        </div>
+      </div>
+
+      {/* Footer Bottom */}
+      <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
+        <p>
+          &copy; {new Date().getFullYear()} <span className="text-white">HeartCare AI</span>. All Rights Reserved.
+        </p>
+      </div>
+    </footer>
     </div>
   );
 };
