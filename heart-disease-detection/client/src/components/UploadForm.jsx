@@ -2,41 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const UploadForm = () => {
-  const [imageFile, setImageFile] = useState(null);
+  const [image, setImage] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
-  const [error, setError] = useState("");
   const [prediction, setPrediction] = useState(null);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      setImageFile(file);
-      setError("");
-    } else {
-      setError("Please upload a valid image file.");
-    }
-  };
-
-  const handleJsonChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === "application/json") {
-      setJsonFile(file);
-      setError("");
-    } else {
-      setError("Please upload a valid JSON file.");
-    }
-  };
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!imageFile || !jsonFile) {
-      setError("Both image and JSON files are required.");
-      return;
-    }
-
     const formData = new FormData();
-    formData.append("image", imageFile);
+    formData.append("image", image);
     formData.append("json", jsonFile);
 
     try {
@@ -47,54 +21,62 @@ const UploadForm = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
       setPrediction(response.data.results);
+      setError(null);
     } catch (err) {
-      console.error("Upload failed:", err);
-      setError("Prediction failed. Please try again.");
+      setError(err.response?.data?.error || "An error occurred.");
+      setPrediction(null);
     }
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-full max-w-lg bg-[#9cbca3] p-8 rounded-lg shadow-lg mx-auto"
-    >
-      <div className="space-y-6">
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-lg font-semibold">Upload Image</label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-        </div>
-
-        <div>
-          <label className="block text-lg font-semibold">
-            Upload JSON File
-          </label>
+          <label className="block text-sm font-medium">Upload Image:</label>
           <input
             type="file"
-            accept="application/json"
-            onChange={handleJsonChange}
+            accept="image/*"
+            onChange={(e) => setImage(e.target.files[0])}
+            required
+            className="mt-1"
           />
         </div>
 
-        {error && <p className="text-red-600">{error}</p>}
+        <div>
+          <label className="block text-sm font-medium">Upload JSON File:</label>
+          <input
+            type="file"
+            accept=".json"
+            onChange={(e) => setJsonFile(e.target.files[0])}
+            required
+            className="mt-1"
+          />
+        </div>
 
         <button
           type="submit"
-          className="w-full py-3 bg-[#617f6d] text-white font-semibold rounded-lg"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Submit
         </button>
-      </div>
+      </form>
+
+      {error && <div className="mt-4 text-red-500">{error}</div>}
 
       {prediction && (
-        <div className="mt-6 p-4 bg-[#f1f7f3] rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-2">Prediction Result</h3>
-          <p>Class: {prediction.class}</p>
-          <p>Confidence: {prediction.confidence.toFixed(2)}%</p>
+        <div className="mt-6 p-4 bg-white rounded shadow">
+          <h3 className="text-lg font-semibold">Prediction Results</h3>
+          <ul className="text-sm">
+            {prediction.map((result, index) => (
+              <li key={index}>
+                {index + 1}. {result.class}: {result.probability.toFixed(2)}%
+              </li>
+            ))}
+          </ul>
         </div>
       )}
-    </form>
+    </div>
   );
 };
 
