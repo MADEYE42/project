@@ -5,6 +5,7 @@ const UploadForm = () => {
   const [image, setImage] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [relatedImages, setRelatedImages] = useState([]);
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
@@ -21,11 +22,28 @@ const UploadForm = () => {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      setPrediction(response.data.results);
+
+      const results = response.data.results;
+      const highestProbResult = results.reduce((prev, current) =>
+        prev.probability > current.probability ? prev : current
+      );
+
+      setPrediction(results);
       setError(null);
+
+      // Dynamically load images based on the class with the highest probability
+      const folderName = highestProbResult.class;
+      const imagePaths = Array.from({ length: 8 }, (_, i) => {
+        const index = i + 1;
+        const imagePath = `heart-disease-detection/client/src/assets/Segregated_Final/${folderName}/${folderName}(${index}).jpg`;
+        return imagePath;
+      }).filter((path, index) => index < 8); // Limit to available images
+
+      setRelatedImages(imagePaths);
     } catch (err) {
       setError(err.response?.data?.error || "An error occurred.");
       setPrediction(null);
+      setRelatedImages([]);
     }
   };
 
@@ -90,6 +108,24 @@ const UploadForm = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {relatedImages.length > 0 && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-[#4c5c48] mb-4">
+              Related Images
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              {relatedImages.map((imagePath, index) => (
+                <img
+                  key={index}
+                  src={imagePath}
+                  alt={`Related ${index + 1}`}
+                  className="rounded-md shadow-md"
+                />
+              ))}
+            </div>
           </div>
         )}
       </div>
