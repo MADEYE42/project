@@ -11,7 +11,7 @@ CORS(app)
 
 # Configuration
 ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-MODEL_PATH = "best_model_segmented85.pth"
+MODEL_PATH = "best_model_segmented88.pth"
 DATA_DIR = "./segmentFinal"
 
 def allowed_file(filename, allowed_extensions):
