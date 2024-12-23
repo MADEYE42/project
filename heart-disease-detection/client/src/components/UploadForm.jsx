@@ -37,6 +37,7 @@ const UploadForm = () => {
         const index = i + 1;
         const imagePath = `heart-disease-detection/client/src/assets/Segregated_Final/${folderName}/${folderName}(${index}).jpg`;
         return imagePath;
+        console.log(imagePath);
       }).filter((path, index) => index < 8); // Limit to available images
 
       setRelatedImages(imagePaths);
