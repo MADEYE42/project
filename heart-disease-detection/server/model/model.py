@@ -132,7 +132,7 @@ def predict_single_image(image_path, model, class_names, device=None):
 
 def main():
     # Configuration - adjust these paths as needed
-    MODEL_PATH = "best_model.pth"  # Path to your saved model
+    MODEL_PATH = "best_model_segmented85.pth"  # Path to your saved model
     DATA_DIR = "heart-disease-detection/server/segmentFinal"  # Directory containing your training data
     IMAGE_PATH = "/upload/"  # Path to the image you want to predict
 
