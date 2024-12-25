@@ -7,44 +7,60 @@ const UploadForm = () => {
   const [prediction, setPrediction] = useState(null);
   const [relatedImages, setRelatedImages] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setPrediction(null);
+    setRelatedImages([]);
+
     const formData = new FormData();
     formData.append("image", image);
     formData.append("json", jsonFile);
 
     try {
+      console.log("Sending request to server...");
       const response = await axios.post(
         "http://localhost:5000/upload",
         formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 30000,
         }
       );
 
-      const results = response.data.results;
-      const highestProbResult = results.reduce((prev, current) =>
-        prev.probability > current.probability ? prev : current
-      );
+      console.log("Received response:", response.data);
 
-      setPrediction(results);
-      setError(null);
+      if (response.data.error) {
+        throw new Error(response.data.error);
+      }
 
-      // Dynamically load images based on the class with the highest probability
-      const folderName = highestProbResult.class;
-      const imagePaths = Array.from({ length: 8 }, (_, i) => {
-        const index = i + 1;
-        const imagePath = `heart-disease-detection/client/src/assets/Segregated_Final/${folderName}/${folderName}(${index}).jpg`;
-        return imagePath;
-        console.log(imagePath);
-      }).filter((path, index) => index < 8); // Limit to available images
+      if (!response.data.results || !Array.isArray(response.data.results)) {
+        throw new Error("Invalid response format from server");
+      }
 
-      setRelatedImages(imagePaths);
+      setPrediction(response.data.results);
+      console.log("Set prediction:", response.data.results);
+
+      if (
+        response.data.related_images &&
+        response.data.related_images.length > 0
+      ) {
+        setRelatedImages(response.data.related_images);
+      }
     } catch (err) {
-      setError(err.response?.data?.error || "An error occurred.");
-      setPrediction(null);
-      setRelatedImages([]);
+      console.error("Error details:", err);
+      setError(
+        err.response?.data?.error ||
+          err.message ||
+          "An error occurred during prediction"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,51 +100,33 @@ const UploadForm = () => {
           <div className="flex justify-center">
             <button
               type="submit"
-              className="bg-[#4c5c48] text-white px-6 py-3 rounded-md hover:bg-[#2a3924] transition duration-200 ease-in-out"
+              disabled={loading}
+              className={`${
+                loading ? "bg-gray-400" : "bg-[#4c5c48] hover:bg-[#2a3924]"
+              } text-white px-6 py-3 rounded-md transition duration-200 ease-in-out`}
             >
-              Submit
+              {loading ? "Processing..." : "Submit"}
             </button>
           </div>
         </form>
 
-        {error && <div className="mt-4 text-red-500 text-center">{error}</div>}
+        {error && <div>{error}</div>}
 
         {prediction && (
           <div className="mt-6 bg-[#f5f7f2] p-4 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-[#4c5c48]">
-              Prediction Results
-            </h3>
-            <ul className="mt-3 text-sm text-[#4c5c48]">
-              {prediction.map((result, index) => (
-                <li key={index} className="py-1">
-                  {index + 1}.{" "}
-                  <span className="font-semibold">{result.class}</span>:{" "}
-                  <span className="font-light">
-                    {result.probability.toFixed(2)}%
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <h3>Predictions:</h3>
+            {prediction.map((p, idx) => (
+              <p key={idx}>
+                {p.class}: {p.probability.toFixed(2)}%
+              </p>
+            ))}
           </div>
         )}
 
-        {relatedImages.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-lg font-semibold text-[#4c5c48] mb-4">
-              Related Images
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              {relatedImages.map((imagePath, index) => (
-                <img
-                  key={index}
-                  src={imagePath}
-                  alt={`Related ${index + 1}`}
-                  className="rounded-md shadow-md"
-                />
-              ))}
-            </div>
-          </div>
-        )}
+        {relatedImages.length > 0 &&
+          relatedImages.map((img, idx) => (
+            <img key={idx} src={img} alt={`Related ${idx + 1}`} />
+          ))}
       </div>
     </div>
   );

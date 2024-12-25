@@ -4,188 +4,162 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 import torchvision.models as models
 from PIL import Image
+import torch.nn.functional as F
+
+class ImprovedResNet(nn.Module):
+    def __init__(self, num_classes):
+        super(ImprovedResNet, self).__init__()
+        # Use a more powerful backbone - ResNet101 instead of ResNet50
+        self.backbone = models.resnet101(pretrained=True)
+        
+        # Freeze early layers
+        for name, param in self.backbone.named_parameters():
+            if "layer4" not in name and "fc" not in name:
+                param.requires_grad = False
+        
+        # Improved classifier head
+        self.classifier = nn.Sequential(
+            nn.Linear(self.backbone.fc.in_features, 1024),
+            nn.BatchNorm1d(1024),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(1024, 512),
+            nn.BatchNorm1d(512),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(512, num_classes)
+        )
+        
+        # Replace the original fc layer
+        self.backbone.fc = nn.Identity()
+        
+    def forward(self, x):
+        features = self.backbone(x)
+        return self.classifier(features)
 
 def get_advanced_model(num_classes):
     """
-    Recreate the model architecture used in training.
-
-    Args:
-        num_classes (int): Number of classes in the model
-
-    Returns:
-        PyTorch model
+    Create an improved model architecture.
     """
-    # Use weights=None to avoid deprecation warning
-    model = models.resnet50(pretrained=False)
+    return ImprovedResNet(num_classes)
 
-    # Gradual unfreezing strategy
-    for param in model.parameters():
-        param.requires_grad = False
-
-    # Unfreeze later stages
-    for param in list(model.layer3.parameters()) + list(model.layer4.parameters()):
-        param.requires_grad = True
-
-    # Enhanced final classification layer with regularization
-    model.fc = nn.Sequential(
-        nn.Dropout(0.5),
-        nn.Linear(model.fc.in_features, 512),
-        nn.BatchNorm1d(512),
-        nn.ReLU(),
-        nn.Dropout(0.4),
-        nn.Linear(512, num_classes)
+def get_transforms(is_training=False):
+    """
+    Get improved image transformations with better augmentation.
+    """
+    normalize = transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
     )
-
-    return model
-
-def get_model_num_classes(model_path):
-    """
-    Get the number of classes from the saved model state dict.
-
-    Args:
-        model_path (str): Path to the saved model weights
-
-    Returns:
-        int: Number of classes in the model
-    """
-    try:
-        state_dict = torch.load(model_path, map_location=torch.device('cpu'))
-        # Get the shape of the final layer's weights
-        final_layer_weights = state_dict['fc.4.weight']  # Updated key for compatibility
-        num_classes = final_layer_weights.shape[0]
-        return num_classes
-    except Exception as e:
-        print(f"Error getting number of classes from model: {e}")
-        return None
-
-def load_model(model_path, num_classes=None):
-    """
-    Load the trained model.
-
-    Args:
-        model_path (str): Path to the saved model weights
-        num_classes (int, optional): Number of classes to use. If None, will be determined from model
-
-    Returns:
-        Loaded PyTorch model
-    """
-    try:
-        # Determine the number of classes if not provided
-        if num_classes is None:
-            num_classes = get_model_num_classes(model_path)
-            if num_classes is None:
-                raise ValueError("Could not determine number of classes from model")
-            print(f"Detected {num_classes} classes from saved model")
-
-        # Create model with the correct number of classes
-        model = get_advanced_model(num_classes)
-
-        # Load the saved state dict
-        state_dict = torch.load(model_path, map_location=torch.device('cpu'))
-
-        # Load the state dict
-        model.load_state_dict(state_dict)
-
-        # Set model to evaluation mode
-        model.eval()
-
-        print("Model loaded successfully.")
-        return model
-
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        return None
-
-def predict_single_image(image_file, model, class_names, device=None):
-    """
-    Predict the class of a single image.
-
-    Args:
-        image_file: File object or path to the image
-        model (torch.nn.Module): Loaded PyTorch model
-        class_names (list): List of class names
-        device (torch.device, optional): Device to run prediction on
-
-    Returns:
-        Prediction results
-    """
-    try:
-        if device is None:
-            device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        model = model.to(device)
-
-        transform = transforms.Compose([
-            transforms.Resize((224, 224)),
+    
+    if is_training:
+        return transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.RandomRotation(15),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+            transforms.RandomAdjustSharpness(sharpness_factor=2),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                              std=[0.229, 0.224, 0.225])
+            normalize
+        ])
+    else:
+        return transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize
         ])
 
-        # Handle both file objects and file paths
-        if isinstance(image_file, str):
-            image = Image.open(image_file).convert("RGB")
-        else:
-            image = Image.open(image_file).convert("RGB")
-
-        input_tensor = transform(image).unsqueeze(0)
-        input_tensor = input_tensor.to(device)
-
+def predict_single_image(image_path, model, class_names, device):
+    """
+    Enhanced prediction function with improved preprocessing and ensemble prediction.
+    """
+    try:
+        # Load and preprocess image
+        image = Image.open(image_path).convert('RGB')
+        
+        # Create multiple transforms for test-time augmentation
+        transform_list = [
+            transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ]),
+            transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.RandomHorizontalFlip(p=1.0),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ]),
+            transforms.Compose([
+                transforms.Resize(256),
+                transforms.RandomResizedCrop(224, scale=(0.9, 1.0)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ])
+        ]
+        
+        # Perform test-time augmentation
+        predictions = []
         with torch.no_grad():
-            outputs = model(input_tensor)
-            probabilities = torch.nn.functional.softmax(outputs, dim=1)
-            top_k_probs, top_k_indices = torch.topk(probabilities, k=min(5, len(class_names)))
-
-            top_k_probs = top_k_probs.cpu().numpy()[0]
-            top_k_indices = top_k_indices.cpu().numpy()[0]
-
-            results = []
-            for prob, idx in zip(top_k_probs, top_k_indices):
-                if idx < len(class_names):  # Ensure index is valid
-                    results.append({
-                        'class': class_names[idx],
-                        'probability': float(prob * 100)
-                    })
-
-            return results
+            for transform in transform_list:
+                input_tensor = transform(image).unsqueeze(0).to(device)
+                output = model(input_tensor)
+                predictions.append(F.softmax(output, dim=1))
+        
+        # Average predictions from all augmentations
+        final_prediction = torch.mean(torch.stack(predictions), dim=0)
+        
+        # Get top-k predictions
+        top_k_probs, top_k_indices = torch.topk(final_prediction, k=5)
+        
+        top_k_probs = top_k_probs.cpu().numpy()[0]
+        top_k_indices = top_k_indices.cpu().numpy()[0]
+        
+        # Apply confidence thresholding
+        confidence_threshold = 0.05  # 5%
+        results = []
+        for prob, idx in zip(top_k_probs, top_k_indices):
+            if prob * 100 >= confidence_threshold:
+                results.append({
+                    'class': class_names[idx],
+                    'probability': float(prob * 100)
+                })
+        
+        return results
 
     except Exception as e:
         print(f"Error during prediction: {e}")
         return None
 
-def main():
-    # Configuration - adjust these paths as needed
-    MODEL_PATH = "/path/to/your/model.pth"  # Path to your saved model
-    DATA_DIR = "/path/to/your/data_dir"     # Directory containing your training data
-    IMAGE_PATH = "/path/to/your/image.jpg"  # Path to the image you want to predict
+def load_model(model_path, num_classes, device):
+    """
+    Enhanced model loading with error handling and validation.
+    """
+    try:
+        model = get_advanced_model(num_classes)
+        
+        # Load state dict with error handling
+        state_dict = torch.load(model_path, map_location=device)
+        model.load_state_dict(state_dict)
+        
+        model = model.to(device)
+        model.eval()
+        
+        # Validate model
+        dummy_input = torch.randn(1, 3, 224, 224).to(device)
+        try:
+            with torch.no_grad():
+                _ = model(dummy_input)
+            print("Model validated successfully.")
+        except Exception as e:
+            print(f"Model validation failed: {e}")
+            return None
+            
+        return model
 
-    # Determine device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"Using device: {device}")
-
-    # Load class names from the training directory
-    class_names = sorted([d for d in os.listdir(DATA_DIR) if os.path.isdir(os.path.join(DATA_DIR, d)) and not d.startswith('.')])
-    print(f"Detected classes: {class_names}")
-
-    # Load the model
-    model = load_model(MODEL_PATH, num_classes=len(class_names))
-
-    if model is not None:
-        # Predict single image
-        predictions = predict_single_image(
-            IMAGE_PATH,
-            model,
-            class_names,
-            device
-        )
-
-        # Display results
-        if predictions:
-            print("\nTop 5 Predictions:")
-            for i, pred in enumerate(predictions, 1):
-                print(f"{i}. {pred['class']}: {pred['probability']:.2f}%")
-        else:
-            print("Prediction failed.")
-
-if __name__ == "__main__":
-    main()
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        return None
