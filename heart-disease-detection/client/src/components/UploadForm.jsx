@@ -4,8 +4,7 @@ import axios from "axios";
 const UploadForm = () => {
   const [image, setImage] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
-  const [prediction, setPrediction] = useState(null);
-  const [relatedImages, setRelatedImages] = useState([]);
+  const [predictions, setPredictions] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -13,51 +12,47 @@ const UploadForm = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setPrediction(null);
-    setRelatedImages([]);
+    setPredictions(null);
 
     const formData = new FormData();
     formData.append("image", image);
     formData.append("json", jsonFile);
 
     try {
-      console.log("Sending request to server...");
       const response = await axios.post(
         "http://localhost:5000/upload",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          timeout: 30000,
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
-      console.log("Received response:", response.data);
+      // Debugging: Log the response
+      console.log("Response from backend:", response.data);
 
-      if (response.data.error) {
-        throw new Error(response.data.error);
+      // Ensure predictions and annotations exist in the response
+      if (response.data.predictions) {
+        setPredictions(response.data.predictions);
+      } else {
+        setError("Predictions are missing in the response.");
       }
 
-      if (!response.data.results || !Array.isArray(response.data.results)) {
-        throw new Error("Invalid response format from server");
+      if (response.data.annotations) {
+        setAnnotations(response.data.annotations);
+      } else {
+        setError("Annotations are missing in the response.");
       }
 
-      setPrediction(response.data.results);
-      console.log("Set prediction:", response.data.results);
-
-      if (
-        response.data.related_images &&
-        response.data.related_images.length > 0
-      ) {
-        setRelatedImages(response.data.related_images);
+      // If the segmented image URL exists
+      if (response.data.segmented_image) {
+        setImageUrl(response.data.segmented_image);
+        console.log("Segmented Image URL:", response.data.segmented_image);
       }
     } catch (err) {
-      console.error("Error details:", err);
+      // Log error response for better debugging
+      console.error("Error during upload:", err);
       setError(
-        err.response?.data?.error ||
-          err.message ||
-          "An error occurred during prediction"
+        err.response?.data?.error || "An error occurred during the upload"
       );
     } finally {
       setLoading(false);
@@ -66,13 +61,13 @@ const UploadForm = () => {
 
   return (
     <div className="p-8 bg-[#9cbca3] min-h-screen flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-2xl font-semibold text-center text-[#4c5c48] mb-6">
-          Upload Files for Prediction
+      <div className="bg-[#d8e2d1] p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <h1 className="text-3xl font-semibold text-center mb-6 text-[#3b3f2e]">
+          Upload Files
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#4c5c48]">
+          <div>
+            <label className="block mb-2 text-sm text-[#3b3f2e]">
               Upload Image
             </label>
             <input
@@ -80,12 +75,11 @@ const UploadForm = () => {
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
               required
-              className="w-full border border-[#4c5c48] bg-[#f5f7f2] text-[#4c5c48] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#9cbca3]"
+              className="w-full p-2 border border-[#a4b89b] rounded-md bg-[#f0f3e2] text-[#3b3f2e] focus:outline-none focus:border-[#9cbca3]"
             />
           </div>
-
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-[#4c5c48]">
+          <div>
+            <label className="block mb-2 text-sm text-[#3b3f2e]">
               Upload JSON File
             </label>
             <input
@@ -93,40 +87,32 @@ const UploadForm = () => {
               accept=".json"
               onChange={(e) => setJsonFile(e.target.files[0])}
               required
-              className="w-full border border-[#4c5c48] bg-[#f5f7f2] text-[#4c5c48] rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#9cbca3]"
+              className="w-full p-2 border border-[#a4b89b] rounded-md bg-[#f0f3e2] text-[#3b3f2e] focus:outline-none focus:border-[#9cbca3]"
             />
           </div>
-
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              disabled={loading}
-              className={`${
-                loading ? "bg-gray-400" : "bg-[#4c5c48] hover:bg-[#2a3924]"
-              } text-white px-6 py-3 rounded-md transition duration-200 ease-in-out`}
-            >
-              {loading ? "Processing..." : "Submit"}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-md bg-[#9cbca3] text-white font-semibold ${
+              loading ? "opacity-50" : "hover:bg-[#7d9b7b]"
+            } transition`}
+          >
+            {loading ? "Processing..." : "Submit"}
+          </button>
         </form>
 
-        {error && <div>{error}</div>}
-
-        {prediction && (
-          <div className="mt-6 bg-[#f5f7f2] p-4 rounded-lg shadow-md">
-            <h3>Predictions:</h3>
-            {prediction.map((p, idx) => (
-              <p key={idx}>
-                {p.class}: {p.probability.toFixed(2)}%
-              </p>
-            ))}
+        {predictions && (
+          <div className="mt-6">
+            <h3 className="font-semibold text-[#3b3f2e]">Predictions:</h3>
+            <ul className="list-disc pl-5 text-[#3b3f2e]">
+              {predictions.map((pred, index) => (
+                <li key={index}>
+                  {pred.class}: {pred.probability.toFixed(2)}%
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-
-        {relatedImages.length > 0 &&
-          relatedImages.map((img, idx) => (
-            <img key={idx} src={img} alt={`Related ${idx + 1}`} />
-          ))}
       </div>
     </div>
   );
