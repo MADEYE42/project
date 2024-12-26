@@ -1,110 +1,102 @@
 import React from "react";
-import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa";
+import { Heart, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const socialLinks = [
+    { Icon: Facebook, href: "https://facebook.com" },
+    { Icon: Twitter, href: "https://twitter.com" },
+    { Icon: Linkedin, href: "https://linkedin.com" },
+    { Icon: Instagram, href: "https://instagram.com" },
+  ];
+
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10 font-[Poppins]">
-      {/* Container */}
-      <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Section 1: About */}
-        <div className="text-center md:text-left">
-          <h3 className="text-xl font-semibold text-white mb-4">HeartCare</h3>
-          <p className="text-gray-400 leading-relaxed">
-            Empowering lives through heart care solutions. Analyze, predict, and
-            improve your heart health effortlessly with our state-of-the-art
-            technology.
-          </p>
-        </div>
+    <footer className="bg-gradient-to-b from-gray-50/60 via-gray-100/70 to-gray-200/80 text-gray-800">
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Heart className="w-7 h-7 text-pink-500" />
+              <span className="text-2xl font-bold text-gray-800">
+                Fetal Heart Care
+              </span>
+            </div>
+            <p className="text-gray-600 text-lg leading-relaxed">
+              Empowering lives through advanced heart care solutions. Your
+              heart, our priority.
+            </p>
+          </div>
 
-        {/* Section 2: Quick Links */}
-        <div className="text-center">
-          <h3 className="text-xl font-semibold text-white mb-4">Quick Links</h3>
-          <ul className="space-y-2">
-            <li>
-              <a
-                href="/"
-                className="hover:text-gray-100 transition duration-300"
-              >
-                Home
-              </a>
-            </li>
-            <li>
-              <a
-                href="/about"
-                className="hover:text-gray-100 transition duration-300"
-              >
-                About Us
-              </a>
-            </li>
-            <li>
-              <a
-                href="/upload"
-                className="hover:text-gray-100 transition duration-300"
-              >
-                Upload Scans
-              </a>
-            </li>
-            <li>
-              <a
-                href="/contact"
-                className="hover:text-gray-100 transition duration-300"
-              >
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Quick Links
+            </h3>
+            <ul className="space-y-3">
+              <li>
+                <a href="/" className="footer-link">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="/upload" className="footer-link">
+                  Upload Scans
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Us Section */}
+          <div>
+            <Link to="/contact-us">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Contact Us
-              </a>
-            </li>
-          </ul>
-        </div>
+              </h3>
+            </Link>
+            <p className="text-gray-600">
+              Have questions? Need assistance with fetal heart care? Our team is
+              here to help. Reach out to us for personalized support and
+              guidance.{" "}
+              <Link
+                to="/contact-us"
+                className="text-pink-500 hover:text-pink-600"
+              >
+                Contact us now.
+              </Link>
+            </p>
+          </div>
 
-        {/* Section 3: Contact Info */}
-        <div className="text-center md:text-right">
-          <h3 className="text-xl font-semibold text-white mb-4">Contact</h3>
-          <p className="text-gray-400">Email: support@heartcareai.com</p>
-          <p className="text-gray-400">Phone: +91 00000 00000</p>
-          <div className="flex justify-center md:justify-end mt-4 space-x-4">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-100 transition duration-300"
-            >
-              <FaFacebookF size={20} />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-100 transition duration-300"
-            >
-              <FaTwitter size={20} />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-100 transition duration-300"
-            >
-              <FaLinkedinIn size={20} />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-100 transition duration-300"
-            >
-              <FaInstagram size={20} />
-            </a>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Follow Us
+            </h3>
+            <div className="flex gap-6">
+              {socialLinks.map(({ Icon, href }, index) => (
+                <a
+                  key={index}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-pink-500 transition-all duration-300 transform hover:scale-110"
+                >
+                  <Icon className="w-6 h-6 text-gray-800" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
+
+        <div className="border-t border-gray-300 pt-8 text-center">
+          <p className="text-gray-600 text-lg">
+            © {new Date().getFullYear()} Fetal Heart Care. All rights reserved.
+          </p>
+        </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
-        <p>
-          &copy; {new Date().getFullYear()}{" "}
-          <span className="text-white">HeartCare </span>. All Rights Reserved.
-          Your Heart, Our Priority.
-        </p>
-      </div>
+      <style jsx>{`
+        .footer-link {
+          @apply text-gray-600 hover:text-gray-800 transition-colors duration-300;
+        }
+      `}</style>
     </footer>
   );
 };

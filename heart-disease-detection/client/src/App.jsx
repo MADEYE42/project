@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload";
+import ContactPage from "./pages/ContactPage";
+import ResearchPage from "./pages/ResearchPage";
 
 function App() {
   return (
@@ -13,10 +15,12 @@ function App() {
         <Navbar />
 
         {/* Main Content */}
-        <main className="flex-grow mt-16 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow mt-16  ">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/upload" element={<Upload />} />
+            <Route path="/contact-us" element={<ContactPage />} />
+            <Route path="/research" element={<ResearchPage />} />
           </Routes>
         </main>
 

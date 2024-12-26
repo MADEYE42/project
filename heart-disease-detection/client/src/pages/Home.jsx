@@ -1,102 +1,104 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
+import React from "react";
+import { Heart, Users, FileText, LineChart } from "lucide-react";
 import HeroImage from "../assets/Heart.png";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaLinkedinIn,
-  FaInstagram,
-} from "react-icons/fa";
+import BackgroundImage from "../assets/Background.png";
+import { Link } from "react-router-dom";
 
-const phrases = [
-  "Your AI Partner for Heart Care.",
-  "Smart Analysis for Better Health.",
-  "Upload Scans. Get Instant Results.",
-];
-
-const Home = () => {
-  const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPhraseIndex((prevIndex) => (prevIndex + 1) % phrases.length);
-    }, 3000); // Change phrase every 3 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="bg-[#f8f8f8] flex flex-col font-[Poppins]">
-      {/* Hero Section */}
-      <section className="flex flex-col md:flex-row items-center justify-center flex-grow h-[80vh] p-6">
-        {/* Left Side - Animated Text */}
-        <div className="w-full md:w-1/2 text-center md:text-left p-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#4a5568] mb-6 leading-tight">
-            Welcome to <span className="text-[#9cbca3]">HeartCare AI</span>
-          </h1>
-          <TransitionGroup>
-            <CSSTransition
-              key={phrases[currentPhraseIndex]}
-              timeout={1000}
-              classNames="fade"
-            >
-              <p className="text-lg md:text-2xl text-gray-600 transition-opacity ease-in-out duration-1000">
-                {phrases[currentPhraseIndex]}
-              </p>
-            </CSSTransition>
-          </TransitionGroup>
-          <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
-            <Link to="/upload">
-              <button className="bg-[#9cbca3] hover:bg-[#6b8c77] text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
-                Upload Scans
-              </button>
-            </Link>
-            <Link to="/info">
-              <button className="bg-transparent border-2 border-[#9cbca3] text-[#9cbca3] hover:bg-[#9cbca3] hover:text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all duration-300">
-                Learn More
-              </button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Right Side - Hero Image */}
-        <div className="w-full md:w-1/2 flex justify-center">
-          <img
-            src={HeroImage}
-            alt="Hero Heart Scan"
-            className="max-w-xs md:max-w-md lg:max-w-lg drop-shadow-2xl animate-pulse"
-          />
-        </div>
-      </section>
-
-      {/* Footer Section */}
-      <section className="bg-white py-8 shadow-md">
-        <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-10">
-          {/* Information Button */}
-          <div className="flex items-center space-x-4 hover:scale-105 transition-transform">
-            <div className="w-12 h-12 rounded-full bg-[#9cbca3] flex items-center justify-center text-white font-bold text-lg shadow-lg">
-              i
-            </div>
-            <span className="text-gray-700 font-semibold">
-              Information about the AI model
-            </span>
-          </div>
-
-          {/* Results Button */}
-          <div className="flex items-center space-x-4 hover:scale-105 transition-transform">
-            <Link to="/upload">
-              <div className="w-12 h-12 rounded-full bg-[#9cbca3] flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                ✔
-              </div>
-            </Link>
-            <span className="text-gray-700 font-semibold">
-              Upload scans to get results
-            </span>
-          </div>
-        </div>
-      </section>
+export default function Home() {
+  const FloatingIcon = ({ icon: Icon, position }) => (
+    <div
+      className={`absolute ${position} transition-transform duration-700 hover:scale-125`}
+    >
+      <div className="bg-white p-4 rounded-full shadow-lg backdrop-blur-md animate-float">
+        <Icon className="w-8 h-8 text-pink-800" />
+      </div>
     </div>
   );
-};
 
-export default Home;
+  return (
+    <div
+      className="relative w-full min-h-screen bg-cover bg-center flex flex-col"
+      style={{ backgroundImage: `url(${BackgroundImage})` }}
+    >
+      {/* Overlay */}
+
+      {/* Content */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
+        {/* Hero Section */}
+        <section className="text-center text-pink-800">
+          <h1 className="text-6xl font-extrabold mb-6 tracking-tight animate-fade-in">
+            Fetal Heart Abnormalities
+          </h1>
+          <p className="text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+            Empowering healthcare with AI-driven solutions for early detection
+            and improved patient outcomes.
+          </p>
+          <div className="flex justify-center gap-8">
+            <button className="bg-pink-500 px-10 text-white py-4 text-lg rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
+              Get Started
+            </button>
+            <button className="bg-pink-100 px-10 py-4 text-lg text-pink-500 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-200 transition-transform transform hover:scale-105">
+              Learn More
+            </button>
+          </div>
+        </section>
+
+        {/* Hero Image */}
+        <div className="relative flex items-center justify-center mt-16">
+          <div className="w-80 h-80 sm:w-96 sm:h-96 bg-white rounded-full flex items-center justify-center shadow-xl animate-scale-up">
+            <img
+              src={HeroImage}
+              alt="Fetal illustration"
+              className="w-2/3 h-2/3 object-contain"
+            />
+          </div>
+
+          {/* Floating Icons */}
+          <FloatingIcon icon={Heart} position="top-[10%] left-[20%]" />
+          <FloatingIcon icon={Users} position="top-[30%] right-[15%]" />
+          <FloatingIcon icon={FileText} position="bottom-[30%] left-[15%]" />
+          <FloatingIcon icon={LineChart} position="bottom-[10%] right-[20%]" />
+        </div>
+
+        {/* Features Section */}
+        <section className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+          {[
+            {
+              title: "Research",
+              description:
+                "Stay informed with the latest research and breakthroughs.",
+              icon: FileText,
+              path: "/research",
+            },
+            {
+              title: "Contact Us",
+              description:
+                "Reach out to our experts for personalized guidance and support.",
+              icon: Users,
+              path: "/contact-us",
+            },
+            {
+              title: "Upload Scans",
+              description:
+                "Upload the Ultrasound image to get the predictions.",
+              icon: Users,
+              path: "/upload",
+            },
+          ].map((feature, index) => (
+            <Link to={feature.path || "#"} key={index}>
+              <div className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 hover:shadow-2xl group transition-all duration-500 transform">
+                <div className="bg-pink-200 p-3 rounded-full w-16 h-16 flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-500">
+                  <feature.icon className="text-pink-800 w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3 text-pink-800">
+                  {feature.title}
+                </h3>
+                <p className="text-pink-600">{feature.description}</p>
+              </div>
+            </Link>
+          ))}
+        </section>
+      </div>
+    </div>
+  );
+}

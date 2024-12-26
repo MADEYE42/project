@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+import BackgroundImage from "../assets/Background.png";
+
 const UploadForm = () => {
   const [image, setImage] = useState(null);
   const [jsonFile, setJsonFile] = useState(null);
@@ -84,14 +86,17 @@ const UploadForm = () => {
   };
 
   return (
-    <div className="p-8 bg-[#9cbca3] min-h-[70vh] flex justify-center items-center">
-      <div className="bg-[#d8e2d1] p-8 rounded-lg shadow-lg w-full max-w-lg">
-        <h1 className="text-3xl font-semibold text-center mb-6 text-[#3b3f2e]">
+    <div
+      className="min-h-[70vh] bg-cover bg-center bg-no-repeat flex justify-center items-center p-6"
+      style={{ backgroundImage: `url(${BackgroundImage})` }}
+    >
+      <div className="bg-white bg-opacity-70 p-8 rounded-lg shadow-lg w-full max-w-lg">
+        <h1 className="text-3xl font-semibold text-center mb-6 text-pink-800">
           Upload Files
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 text-sm text-[#3b3f2e]">
+            <label className="block mb-2 text-sm text-pink-700">
               Upload Image
             </label>
             <input
@@ -99,11 +104,11 @@ const UploadForm = () => {
               accept="image/*"
               onChange={(e) => setImage(e.target.files[0])}
               required
-              className="w-full p-2 border border-[#a4b89b] rounded-md bg-[#f0f3e2] text-[#3b3f2e] focus:outline-none focus:border-[#9cbca3]"
+              className="w-full p-3 border border-pink-300 rounded-md bg-pink-50 text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm text-[#3b3f2e]">
+            <label className="block mb-2 text-sm text-pink-700">
               Upload JSON File
             </label>
             <input
@@ -111,15 +116,15 @@ const UploadForm = () => {
               accept=".json"
               onChange={(e) => setJsonFile(e.target.files[0])}
               required
-              className="w-full p-2 border border-[#a4b89b] rounded-md bg-[#f0f3e2] text-[#3b3f2e] focus:outline-none focus:border-[#9cbca3]"
+              className="w-full p-3 border border-pink-300 rounded-md bg-pink-50 text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-md bg-[#9cbca3] text-white font-semibold ${
-              loading ? "opacity-50" : "hover:bg-[#7d9b7b]"
-            } transition`}
+            className={`w-full py-3 rounded-md bg-pink-500 text-white font-semibold ${
+              loading ? "opacity-50" : "hover:bg-pink-600"
+            } transition-all`}
           >
             {loading ? "Processing..." : "Submit"}
           </button>
@@ -127,8 +132,8 @@ const UploadForm = () => {
 
         {predictions && (
           <div className="mt-6">
-            <h3 className="font-semibold text-[#3b3f2e]">Predictions:</h3>
-            <ul className="list-disc pl-5 text-[#3b3f2e]">
+            <h3 className="font-semibold text-pink-800">Predictions:</h3>
+            <ul className="list-disc pl-5 text-pink-700">
               {predictions.map((pred, index) => (
                 <li key={index}>
                   {pred.class}: {pred.probability.toFixed(2)}%
