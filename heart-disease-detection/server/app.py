@@ -89,4 +89,4 @@ def index(filename):
         filename = "index.html"
     return send_from_directory(dist_folder,filename)
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True)
