@@ -8,11 +8,11 @@ const Footer = () => {
       <div className="container mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Section 1: About */}
         <div className="text-center md:text-left">
-          <h3 className="text-xl font-semibold text-white mb-4">HeartCare AI</h3>
+          <h3 className="text-xl font-semibold text-white mb-4">HeartCare</h3>
           <p className="text-gray-400 leading-relaxed">
-            Empowering lives through AI-driven heart care solutions. Analyze,
-            predict, and improve your heart health effortlessly with our
-            state-of-the-art AI technology.
+            Empowering lives through heart care solutions. Analyze, predict, and
+            improve your heart health effortlessly with our state-of-the-art
+            technology.
           </p>
         </div>
 
@@ -59,7 +59,7 @@ const Footer = () => {
         <div className="text-center md:text-right">
           <h3 className="text-xl font-semibold text-white mb-4">Contact</h3>
           <p className="text-gray-400">Email: support@heartcareai.com</p>
-          <p className="text-gray-400">Phone: +1 (800) 123-4567</p>
+          <p className="text-gray-400">Phone: +91 00000 00000</p>
           <div className="flex justify-center md:justify-end mt-4 space-x-4">
             <a
               href="https://facebook.com"
@@ -100,8 +100,9 @@ const Footer = () => {
       {/* Bottom Bar */}
       <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm text-gray-500">
         <p>
-          &copy; {new Date().getFullYear()} <span className="text-white">HeartCare AI</span>. 
-          All Rights Reserved. Your Heart, Our Priority.
+          &copy; {new Date().getFullYear()}{" "}
+          <span className="text-white">HeartCare </span>. All Rights Reserved.
+          Your Heart, Our Priority.
         </p>
       </div>
     </footer>

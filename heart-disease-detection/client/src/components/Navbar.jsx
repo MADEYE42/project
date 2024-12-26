@@ -14,13 +14,12 @@ const Navbar = () => {
     <nav className="bg-[#9cbca3] p-4 shadow-lg font-[Poppins]">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="text-white text-2xl font-bold flex items-center space-x-2">
-          <img
-            src={HeroImage}
-            alt="HeartCare AI Logo"
-            className="h-8"
-          />
-          <span>HeartCare AI</span>
+        <Link
+          to="/"
+          className="text-white text-2xl font-bold flex items-center space-x-2"
+        >
+          <img src={HeroImage} alt="HeartCare AI Logo" className="h-8" />
+          <span>HeartCare </span>
         </Link>
 
         {/* Navigation Links for Desktop */}
@@ -38,13 +37,6 @@ const Navbar = () => {
           >
             <FaUpload />
             <span>Upload</span>
-          </Link>
-          <Link
-            to="/results"
-            className="text-white hover:text-[#4e8b7c] flex items-center space-x-2 transition duration-300"
-          >
-            <FaSearch />
-            <span>Results</span>
           </Link>
         </div>
 
@@ -93,14 +85,6 @@ const Navbar = () => {
         >
           <FaUpload />
           <span>Upload</span>
-        </Link>
-        <Link
-          to="/results"
-          className="text-white hover:text-[#4e8b7c] flex items-center space-x-2 transition duration-300"
-          onClick={toggleMobileMenu}
-        >
-          <FaSearch />
-          <span>Results</span>
         </Link>
       </div>
     </nav>

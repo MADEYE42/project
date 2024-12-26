@@ -1,6 +1,5 @@
 import React from "react";
 import UploadForm from "../components/UploadForm";
-import Footer from "../components/Footer";
 
 const Upload = () => {
   return (
@@ -10,11 +9,6 @@ const Upload = () => {
         <div className="w-full max-w-3xl bg-white shadow-lg rounded-lg p-6 md:p-8">
           <UploadForm />
         </div>
-      </div>
-
-      {/* Footer */}
-      <div className="w-full">
-        <Footer />
       </div>
     </div>
   );

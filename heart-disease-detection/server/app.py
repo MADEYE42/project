@@ -79,6 +79,14 @@ def upload_files():
 @app.route('/images/<filename>')
 def serve_image(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)  # Ensure it's served from the correct folder
-
+frontend_folder = os.path.join(os.getcwd(),"..","client")
+dist_folder =  os.path.join(frontend_folder,"dist")
+import routes
+@app.route("/",defaults = {"filename":""})
+@app.route("/<path:filename>")
+def index(filename):
+    if not filename:
+        filename = "index.html"
+    return send_from_directory(dist_folder,filename)
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
