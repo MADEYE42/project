@@ -74,7 +74,7 @@ def upload_files():
         return jsonify({
             "predictions": predictions,
             "annotations": data["shapes"],
-            "segmented_image": f'http://localhost:5000/images/segmented_output.jpg'  # Image URL
+            "segmented_image": f'segmented_output.jpg'  # Image URL
         })
 
     except Exception as e:
