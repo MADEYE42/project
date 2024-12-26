@@ -34,12 +34,16 @@ export default function Home() {
             and improved patient outcomes.
           </p>
           <div className="flex justify-center gap-8">
-            <button className="bg-pink-500 px-10 text-white py-4 text-lg rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
-              Get Started
-            </button>
-            <button className="bg-pink-100 px-10 py-4 text-lg text-pink-500 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-200 transition-transform transform hover:scale-105">
-              Learn More
-            </button>
+            <Link to="/upload">
+              <button className="bg-pink-500 px-10 text-white py-4 text-lg rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
+                Get Started
+              </button>
+            </Link>
+            <Link to="/research">
+              <button className="bg-pink-100 px-10 py-4 text-lg text-pink-500 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-200 transition-transform transform hover:scale-105">
+                Learn More
+              </button>
+            </Link>
           </div>
         </section>
 
