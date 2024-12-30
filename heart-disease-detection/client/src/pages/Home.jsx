@@ -17,30 +17,32 @@ export default function Home() {
 
   return (
     <div
-      className="relative w-full min-h-screen bg-cover bg-center flex flex-col"
-      style={{ backgroundImage: `url(${BackgroundImage})` }}
+      className="relative w-full min-h-screen bg-cover bg-center bg-no-repeat flex flex-col"
+      style={{
+        backgroundImage: `url(${BackgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      {/* Overlay */}
-
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto px-6 py-12">
         {/* Hero Section */}
         <section className="text-center text-pink-800">
-          <h1 className="text-6xl font-extrabold mb-6 tracking-tight animate-fade-in">
+          <h1 className="text-4xl sm:text-6xl font-extrabold mb-6 tracking-tight animate-fade-in">
             Fetal Heart Abnormalities
           </h1>
-          <p className="text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
             Empowering healthcare with AI-driven solutions for early detection
             and improved patient outcomes.
           </p>
-          <div className="flex justify-center gap-8">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-8">
             <Link to="/upload">
-              <button className="bg-pink-500 px-10 text-white py-4 text-lg rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
+              <button className="bg-pink-500 px-8 sm:px-10 text-white py-3 sm:py-4 text-base sm:text-lg rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-600 transition-transform transform hover:scale-105">
                 Get Started
               </button>
             </Link>
             <Link to="/research">
-              <button className="bg-pink-100 px-10 py-4 text-lg text-pink-500 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-200 transition-transform transform hover:scale-105">
+              <button className="bg-pink-100 px-8 sm:px-10 py-3 sm:py-4 text-base sm:text-lg text-pink-500 rounded-full font-medium shadow-lg hover:shadow-xl hover:bg-pink-200 transition-transform transform hover:scale-105">
                 Learn More
               </button>
             </Link>
@@ -48,8 +50,8 @@ export default function Home() {
         </section>
 
         {/* Hero Image */}
-        <div className="relative flex items-center justify-center mt-16">
-          <div className="w-80 h-80 sm:w-96 sm:h-96 bg-white rounded-full flex items-center justify-center shadow-xl animate-scale-up">
+        <div className="relative flex items-center justify-center mt-10 sm:mt-16">
+          <div className="w-60 h-60 sm:w-80 sm:h-80 bg-white rounded-full flex items-center justify-center shadow-xl animate-scale-up">
             <img
               src={HeroImage}
               alt="Fetal illustration"
@@ -65,7 +67,7 @@ export default function Home() {
         </div>
 
         {/* Features Section */}
-        <section className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+        <section className="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-10">
           {[
             {
               title: "Research",
@@ -90,14 +92,16 @@ export default function Home() {
             },
           ].map((feature, index) => (
             <Link to={feature.path || "#"} key={index}>
-              <div className="bg-white p-8 rounded-xl shadow-lg hover:scale-105 hover:shadow-2xl group transition-all duration-500 transform">
-                <div className="bg-pink-200 p-3 rounded-full w-16 h-16 flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-500">
-                  <feature.icon className="text-pink-800 w-8 h-8" />
+              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg hover:scale-105 hover:shadow-2xl group transition-all duration-500 transform">
+                <div className="bg-pink-200 p-3 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mb-4 sm:mb-6 group-hover:rotate-12 transition-transform duration-500">
+                  <feature.icon className="text-pink-800 w-6 h-6 sm:w-8 sm:h-8" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-pink-800">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-pink-800">
                   {feature.title}
                 </h3>
-                <p className="text-pink-600">{feature.description}</p>
+                <p className="text-pink-600 text-sm sm:text-base">
+                  {feature.description}
+                </p>
               </div>
             </Link>
           ))}
