@@ -50,7 +50,7 @@ export default function Home() {
         </section>
 
         {/* Hero Image */}
-        <div className="relative flex items-center justify-center mt-10 sm:mt-16">
+        <div className="relative flex items-center justify-center mt-16">
           <div className="w-60 h-60 sm:w-80 sm:h-80 bg-white rounded-full flex items-center justify-center shadow-xl animate-scale-up">
             <img
               src={HeroImage}
