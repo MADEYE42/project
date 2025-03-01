@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Home, Upload, Database, User, LogIn, Menu, X, ChevronRight, Activity, Layers3 as Layers3D, FileImage, FileJson } from 'lucide-react';
+// import React, { useState } from 'react'; // Removed React import
+import { useState } from 'react';
+// import { Home, Upload, Database, User, LogIn, Menu, X, ChevronRight, Activity, Layers3 as Layers3D, FileImage, FileJson } from 'lucide-react'; // Removed unused imports
 
 // Components
 import Navbar from './components/Navbar';
